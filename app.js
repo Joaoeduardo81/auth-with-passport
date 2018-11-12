@@ -145,9 +145,7 @@ passport.use(new GoogleStrategy({
         googleID: profile.id,
       });
       newUser.save()
-        .then(() => {
-          done(null, newUser);
-        });
+        .then(() => done(null, newUser));
     })
     .catch((error) => {
       done(error);
