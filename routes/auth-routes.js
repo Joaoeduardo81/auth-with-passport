@@ -15,6 +15,10 @@ const User = require('../models/user');
 // Bcrypt to encrypt passwords
 const bcryptSalt = 10;
 
+authRoutes.get('/', (req, res, next) => {
+  res.render('index');
+});
+
 authRoutes.get('/signup', (req, res, next) => {
   res.render('auth/signup');
 });
@@ -71,9 +75,26 @@ authRoutes.get('/private-page', ensureLogin.ensureLoggedIn(), (req, res) => {
   res.render('private', { user: req.user });
 });
 
+
 authRoutes.get('/logout', (req, res) => {
   req.logout();
   res.redirect('/login');
 });
+
+authRoutes.get('/auth/slack', passport.authenticate('slack'));
+authRoutes.get('/auth/slack/callback', passport.authenticate('slack', {
+  successRedirect: '/private-page',
+  failureRedirect: '/',
+}));
+
+authRoutes.get('/auth/google', passport.authenticate('google', {
+  scope: ['https://www.googleapis.com/auth/plus.login',
+    'https://www.googleapis.com/auth/plus.profile.emails.read'],
+}));
+
+authRoutes.get('/auth/google/callback', passport.authenticate('google', {
+  failureRedirect: '/',
+  successRedirect: '/private-page',
+}));
 
 module.exports = authRoutes;
